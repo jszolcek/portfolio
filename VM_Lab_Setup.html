@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pyramid Screenshot Carousel</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style></style>
+  </head>
+  <script src="script.js"></script>
+  <body class="carousel-page">
+    <!-- 3D Video Background Layer -->
+    <video class="bg-3d" autoplay muted loop playsinline>
+      <source src="videos/background.mp4" type="video/mp4" />
+      <source src="videos/background.webm" type="video/webm" />
+      Your browser does not support the background video tag.
+    </video>
+    <a id="returnBtn" href="index.html">Return</a>
+
+    <h1>VM Home Lab Sandbox</h1>
+
+    <!-- Carousel Wrapper -->
+    <div class="carousel-wrapper">
+      <button id="prevBtn" class="carousel-btn left-btn">&#10094;</button>
+      <button id="nextBtn" class="carousel-btn right-btn">&#10095;</button>
+
+      <div id="carousel">
+        <!-- First slide -->
+        <div class="pyramid-slide">
+          <div class="image-row">
+            <img
+              src="images/Testing Pi-Hole 3.1.webp"
+              alt="Left 1"
+              class="left"
+            />
+            <img
+              src="images/Testing Pi-Hole 3.2.webp"
+              alt="Center 1"
+              class="center"
+            />
+            <img
+              src="images/Testing Pi-Hole pfSense 3.3.webp"
+              alt="Right 1"
+              class="right"
+            />
+          </div>
+          <p>Checking that Pi-Hole is blocking listed ads</p>
+        </div>
+
+        <div class="pyramid-slide">
+          <div class="image-row">
+            <img
+              src="images/Before Malicious Test pfSense Log 1.1.webp"
+              alt="Left 3"
+              class="left"
+            />
+            <img
+              src="images/Before Checking pfSense 1.2.webp"
+              alt="Center 3"
+              class="center"
+            />
+            <img
+              src="images/Before Checking pfSense (running) 1.3.webp"
+              alt="Right 3"
+              class="right"
+            />
+          </div>
+          <p>Checking that pfSense is running</p>
+        </div>
+
+        <div class="pyramid-slide">
+          <div class="image-row">
+            <img
+              src="images/Blocking known malicious site log 2.1.webp"
+              alt="Left 2"
+              class="left"
+            />
+            <img
+              src="images/Blocked Connection to Malicious Site via pfSense VM 2.2.webp"
+              alt="Center 2"
+              class="center"
+            />
+            <img
+              src="images/pfSense firewall running 2.3.webp"
+              alt="Right 2"
+              class="right"
+            />
+          </div>
+          <p>
+            Testing pfSense is actively blocking the Rocky VM Client from
+            accessing known malicious sites
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overlay for zoomed image -->
+    <div id="overlay">
+      <button id="overlay-prev" class="overlay-btn">&#10094;</button>
+      <img id="overlay-img" src="" alt="Zoomed screenshot" />
+      <button id="overlay-next" class="overlay-btn">&#10095;</button>
+      <p id="overlay-caption"></p>
+    </div>
+
+    <script>
+      // Resize background video to cover the entire viewport
+      function resizeBgVideo() {
+        const video = document.querySelector(".bg-3d");
+        if (video) {
+          video.style.height =
+            Math.max(document.body.scrollHeight, window.innerHeight) + "px";
+        }
+      }
+
+      // Overlay navigation functionality
+      document.addEventListener("DOMContentLoaded", () => {
+        const allImgs = document.querySelectorAll("#carousel .image-row img");
+        const overlay = document.getElementById("overlay");
+        const overlayImg = document.getElementById("overlay-img");
+        const overlayCaption = document.getElementById("overlay-caption");
+        let currentSlideImgs = [];
+        let currentIndex = 0;
+
+        function openOverlay(e) {
+          // Determine this image's slide group
+          const img = e.currentTarget;
+          const slide = img.closest(".pyramid-slide");
+          currentSlideImgs = Array.from(slide.querySelectorAll("img"));
+          currentIndex = currentSlideImgs.indexOf(img);
+          // Show image and caption
+          overlayImg.src = img.src;
+          overlayCaption.textContent = slide.querySelector("p").innerText;
+          overlay.style.display = "flex";
+        }
+
+        // Attach click to each image
+        allImgs.forEach((img) => img.addEventListener("click", openOverlay));
+
+        function showIndex(change) {
+          // Cycle within currentSlideImgs
+          const len = currentSlideImgs.length;
+          currentIndex = (currentIndex + change + len) % len;
+          const img = currentSlideImgs[currentIndex];
+          const slide = img.closest(".pyramid-slide");
+          overlayImg.src = img.src;
+          overlayCaption.textContent = slide.querySelector("p").innerText;
+        }
+
+        document
+          .getElementById("overlay-next")
+          .addEventListener("click", (e) => {
+            e.stopPropagation();
+            showIndex(1);
+          });
+        document
+          .getElementById("overlay-prev")
+          .addEventListener("click", (e) => {
+            e.stopPropagation();
+            showIndex(-1);
+          });
+
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay) overlay.style.display = "none";
+        });
+      });
+    </script>
+  </body>
+</html>

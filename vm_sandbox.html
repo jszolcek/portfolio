@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VM Network Sandbox</title>
+    <link rel="icon" type="image/png" sizes="96x96" href="images/favicon.png" />
+    <link rel="stylesheet" href="styles.css" />
+
+    <style>
+      /* Make markdown text black in light mode */
+      body.light-theme .card,
+      body.light-theme .card * {
+        color: #111 !important;
+      }
+      .card img.sandbox-img {
+        max-width: 1000px !important;
+        width: 100% !important;
+        height: auto !important;
+        margin: 1em 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px #000;
+        cursor: pointer;
+        transition: box-shadow 0.2s, transform 0.2s;
+      }
+      .card img.sandbox-img:hover {
+        box-shadow: 0 0 40px 8px #2196f3;
+        transform: scale(1.01);
+        z-index: 10;
+      }
+      #imgModal {
+        position: absolute; /* changed from fixed */
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 3000;
+        border-radius: 10px;
+        box-shadow: 0 0 20px white;
+        cursor: pointer;
+
+        display: none; /* hide initially */
+        justify-content: center;
+        align-items: center;
+
+        padding: 0;
+        overflow: hidden;
+        text-align: center;
+
+        top: 0; /* will be dynamically set */
+      }
+
+      #modalImg {
+        max-width: 90vw;
+        max-height: 90vh;
+        width: auto;
+        height: auto;
+        border-radius: 8px;
+        background: #222;
+        display: none; /* hide until loaded */
+        margin: 0;
+      }
+
+      #imgModal:active,
+      #imgModal .close {
+        cursor: pointer;
+      }
+      #imgModal .close {
+        position: absolute;
+        top: 2vh;
+        right: 4vw;
+        font-size: 3rem;
+        color: #fff;
+        z-index: 3100;
+        background: none;
+        border: none;
+      }
+
+      body.light-theme .button-link .dropdown-button {
+        background: #000 !important;
+        color: #fff !important;
+      }
+      body.light-theme .button-link .dropdown-button:hover {
+        background: #222 !important;
+        color: #fff !important;
+      }
+    </style>
+  </head>
+  <body>
+    <a id="returnBtn" href="https://jszolcek.github.io/index.html">Return</a>
+    <!-- 3D Video Background Layer -->
+    <video class="bg-3d" autoplay muted loop playsinline>
+      <source src="videos/background.mp4" type="video/mp4" />
+      <source src="videos/background.webm" type="video/webm" />
+      Your browser does not support the background video tag.
+    </video>
+
+    <div class="background-wrapper">
+      <!-- Dark/Light Theme Toggle -->
+      <div class="theme-toggle-container">
+        <label class="switch">
+          <input type="checkbox" id="theme-toggle" />
+          <span class="slider"></span>
+        </label>
+        <span id="theme-icon" class="theme-icon">🌙</span>
+      </div>
+
+      <div class="container">
+        <section class="card full-width">
+          <h1>VM Network Sandbox 🏖️🔧</h1>
+          <p>
+            This page is a placeholder for details, documentation, and resources
+            related to the VirtualBox/Linux Server Lab project/s I've been
+            working on.
+
+            <br /><br />
+          </p>
+          <p>
+            <a
+              href="https://github.com/jszolcek/Linux-Server-VM-Lab/tree/main"
+              target="_blank"
+              class="button-link"
+            >
+              <button class="dropdown-button">View on GitHub</button>
+            </a>
+          </p>
+        </section>
+        <section class="card full-width" style="background: #111; color: #fff">
+          <h3>🏗️ Home Lab Setup History</h3>
+          <ol style="margin-left: 1.2em">
+            <li>
+              💻 Created a new VirtualBox VM<br />Installed the latest Ubuntu
+              Server 22.04 distro.
+            </li>
+            <li>
+              🛠️ Installed essential programs on the VM<br />
+              <ul>
+                <li>OpenSSH Server (to enable SSH access)</li>
+                <li>Prometheus (planning to add Grafana later)</li>
+              </ul>
+            </li>
+            <li>
+              🔍 Discovered VM IP address<br />Ran <code>ip a</code> on the VM,
+              identified IP on interface <code>enp0s3</code>.
+            </li>
+            <li>
+              🔄 Changed VirtualBox network adapter<br />Switched from Bridged
+              to NAT for isolation.
+            </li>
+            <li>
+              🔑 Set up SSH key authentication<br />
+              <ul>
+                <li>Generated SSH key on Windows host</li>
+                <li>
+                  Added public key to <code>~/.ssh/authorized_keys</code> on VM
+                </li>
+                <li>Disabled password login on SSH server</li>
+              </ul>
+            </li>
+            <li>
+              🚪 Configured VirtualBox port forwarding<br />Forwarded host port
+              2222 to guest port 22 for SSH access.
+            </li>
+            <li>
+              📄 Fixed public key format issue<br />
+              <ul>
+                <li>
+                  Extracted the public key from Windows private key using
+                  <code>ssh-keygen -y</code>
+                </li>
+                <li>
+                  Manually added the corrected public key string to
+                  <code>~/.ssh/authorized_keys</code> on VM
+                </li>
+                <li>
+                  Set correct permissions on <code>.ssh</code> folder and
+                  <code>authorized_keys</code> file
+                </li>
+              </ul>
+            </li>
+            <li style="margin-left: 2em; list-style-type: decimal-leading-zero">
+              🔗 Connected from Windows via SSH (passwordless)<br />Using
+              forwarded port and SSH key for passwordless login.
+            </li>
+            <li>
+              🛡️ Installed and configured Pi-hole on Linux server<br />Set up
+              Pi-hole DNS server to block ads and trackers.
+            </li>
+            <li>
+              📡 Tested Pi-hole blocking by pinging a known blocked domain<br />Used
+              ping and dig commands on the server to confirm blocked queries
+              appear in Pi-hole logs.<br />
+              <img
+                src="https://raw.githubusercontent.com/jszolcek/Linux-Server-VM-Lab/refs/heads/main/images/Pi-hole.png"
+                alt="Pi-hole screenshot"
+                class="sandbox-img"
+                style="
+                  max-width: 90vw;
+                  width: 100%;
+                  margin: 1em 0;
+                  border-radius: 8px;
+                  box-shadow: 0 2px 8px #000;
+                  cursor: pointer;
+                "
+              />
+            </li>
+          </ol>
+          <hr style="margin: 2em 0; border: 1px solid #333" />
+          <h3>🛠️ pfSense Setup</h3>
+          <ol style="margin-left: 1.2em">
+            <li>
+              🖥️ <b>Set up pfSense VM</b><br />Installed pfSense in VirtualBox
+              with multiple network adapters.
+            </li>
+            <li>
+              🛡️ <b>Configured firewall rules</b><br />Set up NAT, DHCP, and
+              firewall policies.
+            </li>
+            <li>
+              🌐 <b>Tested external access</b><br />Verified internet access
+              through pfSense router.
+            </li>
+            <li>
+              🔒 <b>Secured pfSense</b><br />Updated admin password and
+              configured VPN settings.
+            </li>
+            <img
+              src="https://raw.githubusercontent.com/jszolcek/Linux-Server-VM-Lab/refs/heads/main/images/pfSense.png"
+              alt="Pi-hole screenshot"
+              class="sandbox-img"
+              style="
+                max-width: 90vw;
+                width: 100%;
+                margin: 1em 0;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px #000;
+                cursor: pointer;
+              "
+            />
+          </ol>
+        </section>
+      </div>
+    </div>
+
+    <!-- Modal for image popup -->
+    <div id="imgModal">
+      <button class="close" onclick="closeModal()">&times;</button>
+      <img id="modalImg" src="" alt="Large view" />
+    </div>
+
+    <script>
+      function resizeBgVideo() {
+        const video = document.querySelector(".bg-3d");
+        if (video) {
+          video.style.height =
+            Math.max(document.body.scrollHeight, window.innerHeight) + "px";
+        }
+      }
+      window.addEventListener("resize", resizeBgVideo);
+      window.addEventListener("DOMContentLoaded", resizeBgVideo);
+
+      // Modal functions
+      function closeModal() {
+        const modal = document.getElementById("imgModal");
+        const modalImg = document.getElementById("modalImg");
+        modal.style.display = "none";
+        modal.style.top = null;
+        modalImg.src = "";
+        modalImg.style.display = "none";
+        window.removeEventListener("scroll", moveModalWithScroll);
+      }
+
+      function moveModalWithScroll() {
+        const modal = document.getElementById("imgModal");
+        modal.style.top = window.scrollY + "px";
+      }
+
+      document.querySelectorAll(".sandbox-img").forEach((img) => {
+        img.style.cursor = "pointer";
+        img.addEventListener("click", function () {
+          const modal = document.getElementById("imgModal");
+          const modalImg = document.getElementById("modalImg");
+
+          modalImg.style.display = "none"; // Hide image until loaded
+          modal.style.display = "flex";
+          modal.style.top = window.scrollY + "px";
+          modalImg.src = this.src;
+
+          window.addEventListener("scroll", moveModalWithScroll);
+        });
+      });
+
+      document.getElementById("modalImg").addEventListener("load", () => {
+        const modalImg = document.getElementById("modalImg");
+        modalImg.style.display = "block";
+      });
+
+      document.getElementById("imgModal").addEventListener("click", (e) => {
+        if (e.target === e.currentTarget) {
+          closeModal();
+        }
+      });
+
+      // Close modal on ESC key press
+      document.addEventListener("keydown", (e) => {
+        const modal = document.getElementById("imgModal");
+        if (e.key === "Escape" && modal.style.display === "flex") {
+          closeModal();
+        }
+      });
+
+      // Theme toggle example (optional)
+      const themeToggle = document.getElementById("theme-toggle");
+      const themeIcon = document.getElementById("theme-icon");
+
+      themeToggle.addEventListener("change", () => {
+        if (themeToggle.checked) {
+          document.body.classList.add("light-theme");
+          themeIcon.textContent = "☀️";
+        } else {
+          document.body.classList.remove("light-theme");
+          themeIcon.textContent = "🌙";
+        }
+      });
+
+      // Load theme preference (optional)
+      window.addEventListener("DOMContentLoaded", () => {
+        if (localStorage.getItem("theme") === "light") {
+          themeToggle.checked = true;
+          document.body.classList.add("light-theme");
+          themeIcon.textContent = "☀️";
+        }
+      });
+      themeToggle.addEventListener("change", () => {
+        localStorage.setItem("theme", themeToggle.checked ? "light" : "dark");
+      });
+    </script>
+  </body>
+</html>

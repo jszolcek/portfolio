@@ -1,0 +1,83 @@
+<!-- contact.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Joe</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Return Button -->
+    <div class="return-button">
+      <a href="index.html" class="menu-button">← Back to Home</a>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle-container">
+      <label class="switch">
+        <input type="checkbox" id="theme-toggle" />
+        <span class="slider"></span>
+      </label>
+      <span id="theme-icon" class="theme-icon">🌙</span>
+    </div>
+
+    <div class="container">
+      <header class="header">
+        <h1>Contact Me</h1>
+      </header>
+
+      <section class="card full-width">
+        <p>
+          If you'd like to get in touch, feel free to reach to me via email or
+          LinkedIn:
+        </p>
+        <div class="contact-grid">
+          <!-- LinkedIn card -->
+          <div class="contact-card">
+            <h3>My LinkedIn</h3>
+            <a href="https://www.linkedin.com/in/joe-szolcek/" target="_blank">
+              <img
+                src="images/linkedin.png"
+                alt="LinkedIn logo"
+                class="contact-icon"
+              />
+            </a>
+            <p class="contact-text">
+              Connect with me on LinkedIn <br />
+              <a
+                href="https://www.linkedin.com/in/joe-szolcek/"
+                target="_blank"
+                class="back-link"
+                >https://www.linkedin.com/in/joe-szolcek/</a
+              >
+            </p>
+          </div>
+
+          <!-- Email card -->
+          <div class="contact-card">
+            <h3>Email Me</h3>
+            <a href="mailto:jszolcek@yahoo.com">
+              <img
+                src="images/email.jpeg"
+                alt="Email icon"
+                class="contact-icon"
+              />
+            </a>
+            <p class="contact-text">
+              Drop me a message anytime:<br />
+              <span class="back-link">jszolcek@yahoo.com</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <p>&copy; 2025 Joe's IT Portfolio</p>
+      </footer>
+    </div>
+
+    <script src="theme.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
