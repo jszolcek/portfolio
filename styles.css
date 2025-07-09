@@ -1040,7 +1040,7 @@ body.carousel-page .image-row {
   flex-grow: 1;
   gap: 0.2rem;
   background: none;
-  height: 100vh important; /* Ensure it fills the viewport height */
+  height: 100vh;
 }
 
 /* Images */
