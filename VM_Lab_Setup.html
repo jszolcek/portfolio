@@ -9,15 +9,15 @@
   </head>
   <script src="script.js"></script>
   <body class="carousel-page">
+    <a id="returnBtn" href="https://jszolcek.github.io/portfolio/index.html"
+      >Return</a
+    >
     <!-- 3D Video Background Layer  -->
     <video class="bg-3d" autoplay muted loop playsinline>
       <source src="videos/background.mp4" type="video/mp4" />
       <source src="videos/background.webm" type="video/webm" />
       Your browser does not support the background video tag.
     </video>
-    <a id="returnBtn" href="https://jszolcek.github.io/portfolio/index.html"
-      >Return</a
-    >
 
     <h1>VM Home Lab Sandbox</h1>
 
@@ -113,6 +113,8 @@
             Math.max(document.body.scrollHeight, window.innerHeight) + "px";
         }
       }
+      window.addEventListener("resize", resizeBgVideo);
+      window.addEventListener("DOMContentLoaded", resizeBgVideo);
 
       // Overlay navigation functionality
       document.addEventListener("DOMContentLoaded", () => {
