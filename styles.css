@@ -801,6 +801,19 @@ body.light-theme p[style*="color: yellow"] {
   justify-content: center; /* horizontal center */
   align-items: center;
 }
+/* VM Deployment Modal Captions */
+#modalCaption {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  color: #fff;
+  text-align: center;
+  max-width: 90vw;
+  word-wrap: break-word;
+  transform: translateY(-2vh);
+}
+body.light-theme #modalCaption {
+  color: #000;
+}
 
 #modalImg {
   max-width: 100vw;

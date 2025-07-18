@@ -81,22 +81,26 @@
       /* Modal styles (synced with vm_sandbox.html, 100% screen height) */
       #imgModal {
         display: none;
+        flex-direction: column; /* stack img + caption vertically */
         position: fixed;
         left: 0;
         top: 0;
         width: 100vw;
         height: 100vh;
-        min-height: 100vh;
         background: rgba(0, 0, 0, 0.95);
         z-index: 2000;
         justify-content: center;
         align-items: center;
+        overflow: auto; /* in case caption pushes height beyond viewport */
+        padding: 1rem; /* give a little breathing room */
       }
       #imgModal img {
+        position: static; /* participate in flex flow */
         max-width: 90vw;
-        max-height: 90vh;
+        max-height: 80vh; /* leave room for caption below */
         border-radius: 12px;
         background: #222;
+        margin-bottom: 1rem; /* space before caption */
       }
       #imgModal:active,
       #imgModal .close {
@@ -202,6 +206,8 @@
     <div id="imgModal">
       <button class="close" onclick="closeModal()">&times;</button>
       <img id="modalImg" src="" alt="Full Image" />
+      <!-- ↓ new caption element: -->
+      <div id="modalCaption" class="modal-caption"></div>
     </div>
 
     <!-- Carousel Script with Keyboard Support -->
@@ -292,12 +298,14 @@
       const galleryImages = document.querySelectorAll(".gallery-img");
       const imgModal = document.getElementById("imgModal");
       const modalImg = document.getElementById("modalImg");
+      const modalCaption = document.getElementById("modalCaption");
 
       function closeModal() {
         imgModal.style.display = "none";
         imgModal.style.top = null;
         modalImg.src = "";
         modalImg.style.display = "none";
+        modalCaption.textContent = "";
         window.removeEventListener("scroll", moveModalWithScroll);
       }
       function moveModalWithScroll() {
@@ -310,6 +318,9 @@
           imgModal.style.display = "flex";
           imgModal.style.top = window.scrollY + "px";
           modalImg.src = img.src;
+          modalCaption.textContent = img.nextElementSibling
+            ? img.nextElementSibling.textContent
+            : "";
           window.addEventListener("scroll", moveModalWithScroll);
         });
       });
