@@ -1142,7 +1142,7 @@ body.carousel-page #overlay p {
 /* Overlay navigation buttons */
 .overlay-btn {
   position: fixed;
-  top: 505;
+  top: 50%;
   transform: translateY(-50%);
   font-size: 3rem;
   background: rgba(0, 0, 0, 0.5);
