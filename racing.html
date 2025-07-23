@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Self-Driving Car Simulation</title>
+    <title>Self-Driving Car Simulation Logic</title>
     <link
       rel="icon"
       type="image/png"
@@ -101,6 +101,7 @@
       const trackBorders = [];
       const obstacles = [];
       const people = [];
+      const factoryNames = ["Building A", "Building B"];
 
       let keys = {};
       window.addEventListener("keydown", (e) => {
@@ -161,16 +162,20 @@
       }
 
       function drawObstacles() {
-        obstacles.forEach((poly) => {
+        obstacles.forEach((poly, index) => {
           const x = poly[0].x;
           const y = poly[0].y;
           const w = poly[1].x - x;
           const h = poly[2].y - y;
+
+          // Draw building
           ctx.fillStyle = "#666";
           ctx.fillRect(x, y, w, h);
           ctx.strokeStyle = "#444";
           ctx.lineWidth = 2;
           ctx.strokeRect(x, y, w, h);
+
+          // Draw windows as before
           const cols = 4;
           const rows = 5;
           const winW = w / (cols * 1.2);
@@ -186,39 +191,203 @@
               ctx.strokeRect(wx, wy, winW, winH);
             }
           }
+
+          // Draw factory name centered above building
+          const name = factoryNames[index] || "Building";
+          ctx.fillStyle = "#fff";
+          ctx.font = "20px sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "bottom"; // so text bottom aligns at y
+          ctx.fillText(name, x + w / 2, y - 10); // 10px above building
+        });
+      }
+
+      function drawDoors() {
+        obstacles.forEach((poly) => {
+          const x = poly[0].x;
+          const y = poly[0].y;
+          const w = poly[1].x - x;
+          const h = poly[2].y - y;
+
+          const doorWidth = w / 5;
+          const doorHeight = h / 6;
+
+          // Door position (center bottom)
+          const doorX = x + w / 2 - doorWidth / 2;
+          const doorY = y + h - doorHeight;
+
+          // Draw main door rectangle
+          ctx.fillStyle = "#552200"; // brown
+          ctx.fillRect(doorX, doorY, doorWidth, doorHeight);
+
+          ctx.strokeStyle = "#331100"; // door frame
+          ctx.lineWidth = 2;
+          ctx.strokeRect(doorX, doorY, doorWidth, doorHeight);
+
+          // Draw vertical middle split line
+          const middleX = doorX + doorWidth / 2;
+          ctx.beginPath();
+          ctx.moveTo(middleX, doorY);
+          ctx.lineTo(middleX, doorY + doorHeight);
+          ctx.stroke();
+
+          // Draw door handles - centered vertically, just left and right of the split
+          const handleRadius = doorHeight / 15;
+          const handleY = doorY + doorHeight / 2;
+          const handleOffsetX = doorWidth / 8;
+
+          ctx.fillStyle = "#ccc"; // silver handle color
+          ctx.strokeStyle = "#888"; // outline for handles
+          ctx.lineWidth = 1;
+
+          // Left handle (just left of split)
+          ctx.beginPath();
+          ctx.arc(
+            middleX - handleOffsetX,
+            handleY,
+            handleRadius,
+            0,
+            Math.PI * 2
+          );
+          ctx.fill();
+          ctx.stroke();
+
+          // Right handle (just right of split)
+          ctx.beginPath();
+          ctx.arc(
+            middleX + handleOffsetX,
+            handleY,
+            handleRadius,
+            0,
+            Math.PI * 2
+          );
+          ctx.fill();
+          ctx.stroke();
         });
       }
 
       function drawPeople() {
         people.forEach((p) => {
-          ctx.fillStyle = "#1505f7"; //blue body colour
+          const scaleFactor = 0.5; // Scaling factor for 1/10th size
+          const torsoHeight = p.r * 3 * scaleFactor;
+          const torsoWidth = p.r * 1.5 * scaleFactor;
+          const armLength = p.r * 1.6 * scaleFactor;
+          const legLength = p.r * 2.5 * scaleFactor;
+          const armY = p.y + 6 * scaleFactor;
+          const legY = p.y + torsoHeight;
+
+          // Cape stuff
+          const apexY = p.y - torsoHeight * 1;
+
+          // Draw cape behind (point at shoulders, wide base near feet)
+          ctx.fillStyle = "red";
           ctx.beginPath();
-          ctx.arc(p.x, p.y + 15, p.r, 0, Math.PI * 2);
+          // Apex at the center of the shoulders
+          ctx.moveTo(
+            p.x,
+            apexY // top of torso
+          );
+          // Bottom‑right corner: wide and down near feet
+          ctx.lineTo(p.x + torsoWidth + 4, p.y + torsoHeight + legLength * 0.8);
+          // Bottom‑left corner
+          ctx.lineTo(p.x - torsoWidth - 4, p.y + torsoHeight + legLength * 0.8);
+          ctx.closePath();
           ctx.fill();
-          ctx.fillStyle = "#ffe4c4";
-          ctx.beginPath();
-          ctx.arc(p.x, p.y - 5, p.r / 2, 0, Math.PI * 2);
-          ctx.fill();
-          const ex = p.r / 5;
-          const ey = p.r / 5.5;
-          const er = p.r / 8;
-          ctx.fillStyle = "black";
-          ctx.beginPath();
-          ctx.arc(p.x - ex, p.y - 5 - ey, er, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.beginPath();
-          ctx.arc(p.x + ex, p.y - 5 - ey, er, 0, Math.PI * 2);
-          ctx.fill();
-          // make em smile
-          ctx.strokeStyle = "black";
+
+          // Neck
+          ctx.strokeStyle = "#ffe4c4";
           ctx.lineWidth = 2;
           ctx.beginPath();
-          const smileX = p.x;
-          const smileY = p.y - 5 + 3; // just below the head center
-          const smileRadius = p.r / 4;
-          const startAngle = 0;
-          const endAngle = Math.PI;
-          ctx.arc(smileX, smileY, smileRadius, startAngle, endAngle, false);
+          ctx.moveTo(p.x, p.y - (p.r / 2) * scaleFactor);
+          ctx.lineTo(p.x, p.y);
+          ctx.stroke();
+
+          // Head
+          ctx.fillStyle = "#ffe4c4"; // skin tone
+          ctx.beginPath();
+          ctx.arc(
+            p.x,
+            p.y - p.r * scaleFactor,
+            p.r * 0.8 * scaleFactor,
+            0,
+            Math.PI * 2
+          );
+          ctx.fill();
+
+          // Top Hat (moved higher + 4x size)
+          ctx.fillStyle = "black";
+
+          // Hat top (taller + wider)
+          ctx.fillRect(
+            p.x - p.r * 0.6 * scaleFactor, // x
+            p.y - p.r * 3.2 * scaleFactor, // y (higher up)
+            p.r * 1.2 * scaleFactor, // width (wider)
+            p.r * 1.6 * scaleFactor // height (taller)
+          );
+
+          // Hat brim (wider and thicker)
+          ctx.fillRect(
+            p.x - p.r * 1.2 * scaleFactor, // x
+            p.y - p.r * 1.9 * scaleFactor, // y (sits above head)
+            p.r * 2.4 * scaleFactor, // width
+            p.r * 0.2 * scaleFactor // height
+          );
+
+          // Eyes
+          ctx.fillStyle = "black";
+          const eyeOffsetX = p.r * 0.3 * scaleFactor;
+          const eyeOffsetY = p.r * 0.4 * scaleFactor;
+          const eyeRadius = p.r * 0.2 * scaleFactor;
+          ctx.beginPath();
+          ctx.arc(
+            p.x - eyeOffsetX,
+            p.y - p.r * scaleFactor - eyeOffsetY,
+            eyeRadius,
+            0,
+            Math.PI * 2
+          );
+          ctx.arc(
+            p.x + eyeOffsetX,
+            p.y - p.r * scaleFactor - eyeOffsetY,
+            eyeRadius,
+            0,
+            Math.PI * 2
+          );
+          ctx.fill();
+
+          // Smile
+          ctx.strokeStyle = "black";
+          ctx.beginPath();
+          ctx.arc(
+            p.x,
+            p.y - p.r * scaleFactor + 3 * scaleFactor,
+            p.r * 0.3 * scaleFactor,
+            0,
+            Math.PI,
+            false
+          );
+          ctx.stroke();
+
+          // Now draw the torso on top
+          ctx.fillStyle = "#1505f7";
+          ctx.fillRect(p.x - torsoWidth / 2, p.y, torsoWidth, torsoHeight);
+
+          // Arms
+          ctx.strokeStyle = "#ffe4c4"; // skin
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(p.x - torsoWidth / 3, armY); // left shoulder
+          ctx.lineTo(p.x - torsoWidth / 3 - armLength, armY + armLength);
+          ctx.moveTo(p.x + torsoWidth / 3, armY); // right shoulder
+          ctx.lineTo(p.x + torsoWidth / 4 + armLength, armY + armLength);
+          ctx.stroke();
+
+          // Legs
+          ctx.beginPath();
+          ctx.moveTo(p.x - torsoWidth / 3, legY); // left leg
+          ctx.lineTo(p.x - torsoWidth / 3, legY + legLength);
+          ctx.moveTo(p.x + torsoWidth / 3, legY); // right leg
+          ctx.lineTo(p.x + torsoWidth / 3, legY + legLength);
           ctx.stroke();
         });
       }
@@ -378,6 +547,7 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawTrack();
         drawObstacles();
+        drawDoors();
         drawPeople();
         updatePeople();
         car.update();
@@ -396,6 +566,7 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawTrack();
         drawObstacles();
+        drawDoors();
         drawPeople();
         car.draw();
       };
@@ -403,6 +574,7 @@
       init();
       drawTrack();
       drawObstacles();
+      drawDoors();
       drawPeople();
       car.draw();
     </script>
