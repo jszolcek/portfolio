@@ -101,7 +101,7 @@
       const trackBorders = [];
       const obstacles = [];
       const people = [];
-      const factoryNames = ["Building A", "Building B"];
+      const buildingNames = ["Building A", "Building B"];
 
       let keys = {};
       window.addEventListener("keydown", (e) => {
@@ -143,6 +143,32 @@
           { x: 700, y: 650 },
         ]);
       }
+      function drawInstructionBox() {
+        const text =
+          'Used "WASD" to manually override auto steering, your speed when nearing pedestrians is still forced to be slower.';
+        const padding = 5;
+        const fontSize = 23; // same size as your <h2>
+        ctx.font = `${fontSize}px sans-serif`;
+        ctx.textBaseline = "bottom";
+        ctx.textAlign = "left";
+
+        // measure text
+        const metrics = ctx.measureText(text);
+        const boxW = metrics.width + padding * 2;
+        const boxH = fontSize + padding * 2;
+
+        // position centered at bottom
+        const x = (canvas.width - boxW) / 2;
+        const y = canvas.height - boxH - 10;
+
+        // semi‑transparent background
+        ctx.fillStyle = "rgba(0,0,0,0.5)";
+        ctx.fillRect(x, y, boxW, boxH);
+
+        // the white text
+        ctx.fillStyle = "#fff";
+        ctx.fillText(text, x + padding, y + boxH - padding);
+      }
 
       function buildPeople() {
         people.length = 0;
@@ -177,7 +203,7 @@
 
           // Draw windows as before
           const cols = 4;
-          const rows = 5;
+          const rows = 6;
           const winW = w / (cols * 1.2);
           const winH = h / (rows * 1.2);
           const xOff = (w - cols * winW) / (cols + 1);
@@ -185,6 +211,7 @@
           ctx.fillStyle = "#add8e6";
           for (let i = 0; i < cols; i++) {
             for (let j = 0; j < rows; j++) {
+              if (j === rows - 1) continue;
               const wx = x + xOff * (i + 1) + winW * i;
               const wy = y + yOff * (j + 1) + winH * j;
               ctx.fillRect(wx, wy, winW, winH);
@@ -192,13 +219,13 @@
             }
           }
 
-          // Draw factory name centered above building
-          const name = factoryNames[index] || "Building";
+          // Draw bulding name centered above building
+          const name = buildingNames[index] || "Building";
           ctx.fillStyle = "#fff";
           ctx.font = "20px sans-serif";
           ctx.textAlign = "center";
           ctx.textBaseline = "bottom"; // so text bottom aligns at y
-          ctx.fillText(name, x + w / 2, y - 10); // 10px above building
+          ctx.fillText(name, x + w / 2, y - 2); // 10px above building
         });
       }
 
@@ -552,6 +579,7 @@
         updatePeople();
         car.update();
         car.draw();
+        drawInstructionBox();
         anim = requestAnimationFrame(animate);
       }
 
